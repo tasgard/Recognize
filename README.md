@@ -26,7 +26,7 @@ __Arguments:__
 3. Callback function
 
 ```js
-recognize.solve(data, {numeric:1, min_len:5}, function(err, id, code)
+recognize.solve(base64image, {numeric:1, min_len:5}, function(err, id, code)
 {
 	if(err) throw err;
 	console.log(id, code);
@@ -34,7 +34,7 @@ recognize.solve(data, {numeric:1, min_len:5}, function(err, id, code)
 ```
 OR
 ```js
-recognize.solve(data, function(err, id, code)
+recognize.solve(base64image, function(err, id, code)
 {
 	if(err) throw err;
 	console.log(id, code);
