@@ -3,26 +3,23 @@
   "version": "0.2.3",
   "description": "Client for solving services using node.js",
   "main": "recognize.js",
-  "directories": {
-    "example": "example"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kdinisv/Recognize.git"
+    "url": "git+https://github.com/tasgard/Recognize.git"
   },
   "keywords": [
     "captcha",
-    "rucaptcha",
-    "recaptcha.com",
-    "antigate"
+    "captcha24",
+    "antigate",
+    "rucaptcha"
   ],
-  "author": "kdinisv",
+  "author": "tasgard",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kdinisv/Recognize/issues"
+    "url": "https://github.com/tasgard/Recognize/issues"
   },
-  "homepage": "https://github.com/kdinisv/Recognize#readme"
+  "homepage": "https://github.com/tasgard/Recognize#readme"
 }

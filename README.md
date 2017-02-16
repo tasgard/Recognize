@@ -1,14 +1,13 @@
 # Recognize
 
-[![NPM](https://nodei.co/npm/recognize.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/recognize/)
 ## Installation
 Using NPM utility to install module directly:
 ```npm
-npm install recognize
+npm install tasgard/recognize
 ```
 
 ## Service
-* [rucaptcha](https://rucaptcha.com/?from=1027759)
+* [rucaptcha](https://rucaptcha.com)
 * [antigate](https://anti-captcha.com)
 * [captcha24](http://captcha24.com)
 
@@ -27,7 +26,7 @@ __Arguments:__
 3. Callback function
 
 ```js
-recognize.solving(data, {numeric:1, min_len:5}, function(err, id, code)
+recognize.solve(data, {numeric:1, min_len:5}, function(err, id, code)
 {
 	if(err) throw err;
 	console.log(id, code);
@@ -35,7 +34,7 @@ recognize.solving(data, {numeric:1, min_len:5}, function(err, id, code)
 ```
 OR
 ```js
-recognize.solving(data, function(err, id, code)
+recognize.solve(data, function(err, id, code)
 {
 	if(err) throw err;
 	console.log(id, code);
@@ -61,30 +60,25 @@ recognize.report(id, function(err, answer)
 
 ## Example
 ```js
-var recognize = new Recognize('antigate', {
-    key:'api-key'
-});
+var Anticaptcha = require('recognize'),
+	anticaptcha = new Anticaptcha(service, {
+		key : api_key
+	});
 
-recognize.balanse(function(price)
-{
+recognize.balance(function(price) {
     console.log('My balance:', price);
 });
 
-fs.readFile('./captcha.png', function(err, data){
-    recognize.solving(data, function(err, id, code)
-    {
-        if(err) throw err;
-        if(isValide(code))
-        	console.log('Captcha:', code);
-        else
-        {
-        	console.log('Captcha not valid');
-        	recognize.report(id, function(err, answer)
-        	{
-        		console.log(answer);
-        	});
-        }
-    });
+fs.readFile('./captcha.png', function(err, data) {
+	anticaptcha.solve(data, {phrase : 0}, function(error, id, code) {		
+		if (error) {
+			console.error(error);
+			process.exit(1);
+		} else {
+			console.log(code);
+			process.exit(0);
+		}
+	});
 });
 ```
 

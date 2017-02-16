@@ -1,14 +1,13 @@
-module.exports = Recognize;
+module.exports  = Anticaptcha;
 
-var http = require('http');
-var uri = require('url');
-var querystring = require('querystring');
+var http        = require('http'),
+	uri         = require('url'),
+	querystring = require('querystring');
 
-function Recognize(type, settings)
-{
+function Anticaptcha(type, settings) {
     this.type = type;
-    switch(type)
-    {
+	
+    switch(type) {
         case 'rucaptcha':
             this.baseUrl = 'http://rucaptcha.com';
             this.id = 768;
@@ -25,40 +24,42 @@ function Recognize(type, settings)
             throw new Error('invalid type');
 
     }
-    this.settings = settings || {};
-    this.key = this.settings.key || this.key;
+	
+    this.settings = settings;
+    this.key      = this.settings.key;
     require('events').EventEmitter.call(this);
 }
 
-require('util').inherits(Recognize, require('events').EventEmitter);
+require('util').inherits(Anticaptcha, require('events').EventEmitter);
 
-Recognize.prototype = {
-    solving: function(file, settings, cb){
-        if(typeof settings == 'function')
-        {
+Anticaptcha.prototype = {
+    solve: function (image, settings, cb) {
+        if (typeof settings == 'function') {
             cb = settings;
             settings = {};
         }
+		
         settings = settings || this.settings || {};
 
-        var self = this;
-        var options = uri.parse(this.baseUrl + '/in.php');
+        var self = this,
+			options = uri.parse(this.baseUrl + '/in.php');
+			
         options.method = 'POST';
-        options.headers = {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        };
-        var req = http.request(options, function(res){
+		
+        var req = http.request(options, function (res) {
             var body = [];
+			
             res.on('data', function (chunk) {
                 body.push(chunk);
             });
+			
             res.on('end', function () {
                 var answer = body.toString().split('|');
-                //console.log(answer);
+				
                 switch (answer[0])
                 {
                     case 'OK':
-                        get(self.baseUrl, self.key, answer[1], function(err, code){
+                        get(self.baseUrl, self.key, answer[1], function (err, code) {
                             cb(err, answer[1], code);
                         });
                         break;
@@ -68,56 +69,67 @@ Recognize.prototype = {
             });
         });
 
-        req.on('error', function(e) {
+        req.on('error', function (e) {
             console.error(e);
         });
+		
         settings.soft_id = this.id;
-        settings.method = 'base64';
-        settings.key = this.key;
-        settings.body = file.toString('base64');
+        settings.method  = 'base64';
+        settings.key     = this.key;
+        settings.body    = image;
+		
         req.write(querystring.stringify(settings));
         req.end();
     },
-    balanse: function(cb){
+	
+    report: function (id, cb) {
         var self = this;
-
-        http.get(this.baseUrl + '/res.php?key=' + self.key + '&action=getbalance', function(res){
+		
+        http.get(this.baseUrl + '/res.php?key=' + self.key + '&action=reportbad&id=' + id, function (res) {
             var body = [];
+			
             res.on('data', function (chunk) {
                 body.push(chunk);
             });
-            res.on('end', function () {
-                cb(body.toString());
-            });
-        }).on('error', function(err){
-            console.error(err);
-        });
-    },
-    report: function(id, cb)
-    {
-        var self = this;
-        http.get(this.baseUrl + '/res.php?key=' + self.key + '&action=reportbad&id=' + id, function(res){
-            var body = [];
-            res.on('data', function (chunk) {
-                body.push(chunk);
-            });
+			
             res.on('end', function () {
                 cb(null, body.toString());
             });
-        }).on('error', function(err){
+        }).on('error', function (err) {
+            console.error(err);
+        });
+    },
+	
+    balance: function(cb) {
+        var self = this;
+
+        http.get(this.baseUrl + '/res.php?key=' + self.key + '&action=getbalance', function (res){
+            var body = [];
+			
+            res.on('data', function (chunk) {
+                body.push(chunk);
+            });
+			
+            res.on('end', function () {
+                cb(body.toString());
+            });
+        }).on('error', function (err){
             console.error(err);
         });
     }
 };
 
 function get(baseUrl, key, id, cb){
-    http.get(baseUrl + '/res.php?key=' + key + '&action=get&id=' + id, function(res){
+    http.get(baseUrl + '/res.php?key=' + key + '&action=get&id=' + id, function (res){
         var body = [];
+		
         res.on('data', function (chunk) {
             body.push(chunk);
         });
+		
         res.on('end', function () {
             var answer = body.toString().split('|');
+			
             switch(answer[0]){
                 case 'OK':
                     cb(null, answer[1]);
@@ -129,7 +141,7 @@ function get(baseUrl, key, id, cb){
                     cb(answer[0], null);
             }
         });
-    }).on('error', function(err){
+    }).on('error', function (err){
         console.error(err);
     });
 };
