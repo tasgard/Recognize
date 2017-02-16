@@ -12,12 +12,12 @@ npm install tasgard/recognize
 * [captcha24](http://captcha24.com)
 
 ## Documentation
-* [solving](#solving) 
+* [solve](#solve) 
 * [balance](#balance)
 * [report](#report)
 
-<a name="solving" />
-### [Recognize Object].solving()
+<a name="solve" />
+### [Recognize Object].solve()
 
 __Arguments:__
 
