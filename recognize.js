@@ -33,7 +33,7 @@ function Anticaptcha(type, settings) {
 require('util').inherits(Anticaptcha, require('events').EventEmitter);
 
 Anticaptcha.prototype = {
-    solve: function (image, settings, cb) {
+    solve: function (base64image, settings, cb) {
         if (typeof settings == 'function') {
             cb = settings;
             settings = {};
@@ -76,7 +76,7 @@ Anticaptcha.prototype = {
         settings.soft_id = this.id;
         settings.method  = 'base64';
         settings.key     = this.key;
-        settings.body    = image;
+        settings.body    = base64image;
 		
         req.write(querystring.stringify(settings));
         req.end();
